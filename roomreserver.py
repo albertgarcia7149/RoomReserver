@@ -4,34 +4,42 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.select import Select
 import os
+import sys
 import time
 
+# Define webdriver location and initialize webdriver
 url="chromedriver.exe"
 driver=webdriver.Chrome(url)
 
-
+# Define user information to fill out form
 first_name = "Albert"
 last_name = "Garcia"
 email = "awgarcia@ucsc.edu"
 group_name = "Python Bravo"
 
-page_url = 'https://calendar.library.ucsc.edu/booking/sel'
+# Get command line args for date of booking
+if len(sys.argv) != 4:
+    print("Usage: Day_of_week Month Day (ex: Thursday April 18")
+    exit()
 
-day = "18";
-day_of_week = "Thursday"
-month = "April"
+# Define the page we will look on to make the booking
+# This is set up for S&E lower floor room 135
+page_url = 'https://calendar.library.ucsc.edu/booking/sel'
 location = "S&E135 (5)"
+
+# Assign command line args
+day = sys.argv[3];
+day_of_week = sys.argv[1]
+month = sys.argv[2]
 
 driver.get(page_url)
 
 #Select the calender
-#calender=driver.find_element_by_xpath("/html/body/div[3]/div[2]/section/div/div/div[2]/div[1]/div[2]/div/div/table")
 calender=driver.find_element_by_xpath('//*[@id="s-lc-rm-cal"]')
 #Click on the day you want in the calender
 calender.find_element_by_link_text(day).click()
 
 time.sleep(1)
-
 
 #Select the room schedule table
 table=driver.find_element_by_xpath('//*[@id="s-lc-rm-right"]')
@@ -64,27 +72,27 @@ except NoSuchElementException:
     driver.quit()
 
 time.sleep(1)
-
+#Press continue button to open form
 continue_button = driver.find_element_by_xpath('//*[@id="rm_tc_cont"]')
 continue_button.click()
-
+#Enter first name
 fname_box = driver.find_element_by_xpath('//*[@id="fname"]')
 fname_box.send_keys(first_name)
-
+#Enter last name
 lname_box = driver.find_element_by_xpath('//*[@id="lname"]')
 lname_box.send_keys(last_name)
-
+#Enter email
 email_box = driver.find_element_by_xpath('//*[@id="email"]')
 email_box.send_keys(email)
-
+#Enter group name
 group_box = driver.find_element_by_xpath('//*[@id="nick"]')
 group_box.send_keys(group_name)
-
+# Select undergrad
 status_drop = Select(driver.find_element_by_id("q1"))
 status_drop.select_by_index(1)
-
+# Select class project
 purpose_drop = Select(driver.find_element_by_id("q2"))
 purpose_drop.select_by_index(3)
-
+# Submit
 submit_button = driver.find_element_by_id('s-lc-rm-sub')
 submit_button.click()
